@@ -1,4 +1,4 @@
-package blocketh.web.rest;
+package kryptonytt.web.rest;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;

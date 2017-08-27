@@ -1,4 +1,4 @@
-package blocketh.web.socket;
+package kryptonytt.web.socket;
 
 import java.io.IOException;
 
