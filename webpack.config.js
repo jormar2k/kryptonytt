@@ -7,7 +7,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 var config = {
   entry: {
       app: './client/index.js',
-      vendor: ['jquery', 'bootstrap', 'react', 'react-dom', 'popper.js']
+      vendor: ['react', 'react-dom']
   },
   output: {
     path: path.resolve('dist'),
