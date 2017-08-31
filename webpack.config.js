@@ -6,7 +6,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 var config = {
   entry: {
-      app: './client/index.js',
+      app: './client/app/index.js',
       vendor: ['react', 'react-dom']
   },
   output: {
@@ -26,7 +26,10 @@ var config = {
       {
         test : /\.jsx?/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        loader: 'babel-loader',
+          query: {
+              presets: ["react", "es2015", "stage-2"]
+          }
       }
     ],
   },
