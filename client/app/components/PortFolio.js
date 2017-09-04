@@ -4,7 +4,6 @@ import { Table } from 'react-bootstrap';
 export const PortFolio = (props) => {
     return (
         <div>
-            <h4>props.name</h4>
             <Table responsive>
 
                 <thead>

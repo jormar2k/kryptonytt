@@ -39,7 +39,7 @@ const portFolioReducer = (state = {
             console.log(action.payload);
             state = {
                 ...state,
-                currency: action.payload,
+                currencies: action.payload,
                 isLoading: false
             };
             break;
