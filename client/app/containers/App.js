@@ -1,55 +1,53 @@
 import React from "react";
 import {connect} from "react-redux";
 //////////////////////////////////////////
-import {Button} from 'react-bootstrap';
-import {Form} from 'react-bootstrap';
-import {FormControl} from 'react-bootstrap';
-import {FormGroup} from 'react-bootstrap';
-//////////////////////////////////////////
-import {PortFolio} from '../components/PortFolio';
 import {addPortFolioEntry} from '../actions/portFolioActions'
 import {removePortFolioEntry} from '../actions/portFolioActions'
+import {fetchPortFolios} from '../actions/portFolioActions'
+import {fetchCurrencyData} from '../actions/portFolioActions'
+import {AddNewEntry} from "./AddNewEntry";
+import {PortFolioContainer} from "./PortFolioContainer";
 
 class App extends React.Component {
-
-    render() {
-        return (
-            <div id="appcontainer" className="container">
-                <header>
-                    <h1>Test</h1>
-                </header>
-
-                <PortFolio/>
-
-                <Form inline>
-                    <FormGroup controlId="entryInput" validationState={this.getValidationState()}>
-                        <FormControl type="string" value={this.state.value}
-                                     placeholder="Add portfolio"
-                                     componentClass="input"/>
-
-                        <Button id="addportfoliobtn" bsStyle="primary"
-                                onClick={() => this.props.addPortFolioEntry("dd")}>Change the Username
-                        </Button>
-                    </FormGroup>
-
-                </Form>
-
-            </div>
-        );
+    componentDidMount() {
+        this.props.fetchPortFolios();
+        this.props.fetchCurrencyData(10);
     }
 
-    getValidationState() {
-        const length = this.state.value.length;
-        if (length > 10) return 'success';
-        else if (length > 5) return 'warning';
-        else if (length > 0) return 'error';
+    render() {
+        var content;
+
+
+        if (this.props.isLoading) {
+            content = <h2>Loading...</h2>;
+        } else if (this.props.error) {
+            content = <h2>error</h2>;
+        } else {
+            content = (
+                <div id="appcontainer" className="container">
+                    <header>
+                        <h1>Main title</h1>
+                    </header>
+
+                    {this.props.portfolios.map((portfolio, i) => <PortFolioContainer key={i} currencies={this.props.currencies}/>)}
+
+                    <AddNewEntry addEntry={(name) => this.props.addPortFolioEntry(name)}/>
+
+
+                </div>
+            );
+        }
+
+        return content;
     }
 }
 
-
 const mapStateToProps = (state) => {
     return {
-        portfolios: state.portfolios,
+        portfolios: state.portfolios.entries,
+        currencies: state.portfolios.currencies,
+        isLoading: state.portfolios.isLoading,
+        error: state.portfolios.error
     };
 };
 
@@ -61,6 +59,14 @@ const mapDispatchToProps = (dispatch) => {
         },
         removePortFolioEntry: (name) => {
             dispatch(removePortFolioEntry(name));
+
+        },
+        fetchPortFolios: () => {
+            dispatch(fetchPortFolios());
+
+        },
+        fetchCurrencyData: (limit) => {
+            dispatch(fetchCurrencyData(limit));
 
         }
     };
