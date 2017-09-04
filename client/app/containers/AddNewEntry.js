@@ -34,7 +34,7 @@ export class AddNewEntry extends React.Component {
                     <FormControl.Feedback/>
                 </FormGroup>
                 <Button id="addportfoliobtn" bsStyle="primary" disabled={this.state.value.length < 1}
-                        onClick={this.btnClicked.bind(this)}>Add new
+                        onClick={(e) => this.btnClicked()}>Add new
                 </Button>
 
             </Form>

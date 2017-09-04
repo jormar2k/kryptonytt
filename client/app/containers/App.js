@@ -28,9 +28,11 @@ class App extends React.Component {
                     <header>
                         <h1>Main title</h1>
                     </header>
-
+					{console.log(this.props)}
                     {this.props.portfolios.map((portfolio, i) => <PortFolioContainer key={i} name={portfolio} currencies={this.props.currencies}/>)}
 
+					<br/>
+					<br/>
                     <AddNewEntry addEntry={(name) => this.props.addPortFolioEntry(name)}/>
 
 
