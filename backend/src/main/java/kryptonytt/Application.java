@@ -26,13 +26,10 @@ public class Application {
         return args -> {
 
             userService.createNewUser("tobbe");
-//            System.out.println("Let's inspect the beans provided by Spring Boot:");
-//
-//            String[] beanNames = ctx.getBeanDefinitionNames();
-//            Arrays.sort(beanNames);
-//            for (String beanName : beanNames) {
-//                System.out.println(beanName);
-//            }
+            userService.createNewUser("jøgge");
+            userService.createNewUser("saibot");
+            userService.createNewUser("tore");
+            userService.createNewUser("thorry");
 
         };
     }

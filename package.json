@@ -10,7 +10,7 @@
     "start": "webpack-dev-server --port 3000"
   },
   "author": "jbm",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
