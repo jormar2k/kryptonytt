@@ -14,9 +14,14 @@ public class UserControllerREST {
     @Autowired
     private UserService userService;
 
-    @RequestMapping
+    @RequestMapping( method = RequestMethod.GET)
     public Collection<KryptonyttUser> allUsers() {
         return userService.findUsers();
+    }
+
+    @RequestMapping(value ="/{username}", method = RequestMethod.GET)
+    public KryptonyttUser getUser(@PathVariable String username) {
+        return userService.findUser(username);
     }
 
     @RequestMapping(method = RequestMethod.POST)

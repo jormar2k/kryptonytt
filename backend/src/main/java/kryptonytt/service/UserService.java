@@ -1,6 +1,7 @@
 package kryptonytt.service;
 
 import kryptonytt.entity.KryptonyttUser;
+import kryptonytt.exception.UserNotFound;
 import kryptonytt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,5 +34,9 @@ public class UserService {
 
     public void deleteUser(String username) {
         userRepository.delete(new KryptonyttUser(username));
+    }
+
+    public KryptonyttUser findUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFound(username));
     }
 }
