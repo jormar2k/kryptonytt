@@ -1,4 +1,4 @@
-package kryptonytt.web.socket;
+package kryptonytt.socket;
 
 import java.io.IOException;
 
