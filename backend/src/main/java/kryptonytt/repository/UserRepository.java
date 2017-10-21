@@ -1,10 +1,10 @@
 package kryptonytt.repository;
 
-import kryptonytt.entity.KryptonyttUser;
+import kryptonytt.entity.KryptonyttUserHib;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<KryptonyttUser, Long> {
-    Optional<KryptonyttUser> findByUsername(String username);
+public interface UserRepository extends JpaRepository<KryptonyttUserHib, Long> {
+    Optional<KryptonyttUserHib> findByUsername(String username);
 }

@@ -1,42 +1,43 @@
 package kryptonytt.service;
 
-import kryptonytt.entity.KryptonyttUser;
+import kryptonytt.domain.KryptonyttUser;
+import kryptonytt.entity.KryptonyttUserHib;
 import kryptonytt.exception.UserNotFound;
 import kryptonytt.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collection;
 
-@Component
+@Service
 @Transactional
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void createNewUser(String username) {
-        userRepository.save(new KryptonyttUser(username));
+    public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public Collection<KryptonyttUser> findUsers() {
-        return userRepository.findAll();
+    public KryptonyttUser createUser(KryptonyttUser kryptonyttUser) {
+        KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib();
+        kryptonyttUserHib.setUsername(kryptonyttUser.getUsername());
+        kryptonyttUserHib.setPassword(bCryptPasswordEncoder.encode(kryptonyttUser.getPassword()));
+        KryptonyttUserHib saved = userRepository.save(kryptonyttUserHib);
+        return KryptonyttUserHib.toKryptonyttUser(saved);
     }
 
-    public Collection<KryptonyttUser> createUsers(Collection<KryptonyttUser> kryptonyttUsers) {
-        return userRepository.save(kryptonyttUsers);
-    }
-
-    public void deleteUsers(Collection<KryptonyttUser> kryptonyttUsers) {
-        userRepository.delete(kryptonyttUsers);
-    }
 
     public void deleteUser(String username) {
-        userRepository.delete(new KryptonyttUser(username));
+        KryptonyttUserHib userExample = new KryptonyttUserHib();
+        userExample.setUsername(username);
+        userRepository.delete(userExample);
     }
 
     public KryptonyttUser findUser(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFound(username));
+        KryptonyttUserHib kryptonyttUserHib = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFound(username));
+        return KryptonyttUserHib.toKryptonyttUser(kryptonyttUserHib);
     }
 }
