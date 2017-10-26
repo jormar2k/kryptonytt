@@ -2,6 +2,8 @@ package kryptonytt.rest;
 
 import kryptonytt.domain.KryptonyttUser;
 import kryptonytt.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,12 +22,14 @@ public class UserControllerREST {
     }
 
     @PostMapping("/sign-up")
-    public KryptonyttUser createUser(@RequestBody KryptonyttUser kryptonyttUser) {
-        return userService.createUser(kryptonyttUser);
+    public ResponseEntity createUser(@RequestBody KryptonyttUser kryptonyttUser) {
+        userService.createUser(kryptonyttUser);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @DeleteMapping(value ="/{username}")
-    public void deleteUser(@PathVariable String username) {
+    public ResponseEntity deleteUser(@PathVariable String username) {
         userService.deleteUser(username);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

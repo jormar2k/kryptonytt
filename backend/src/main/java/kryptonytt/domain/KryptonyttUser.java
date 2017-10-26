@@ -1,15 +1,17 @@
 package kryptonytt.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import kryptonytt.rest.View;
 
 public class KryptonyttUser {
 
     @JsonIgnore
     private Long id;
 
+    @JsonView(View.Simple.class)
     private String username;
 
-    @JsonIgnore
     private String password;
 
     public KryptonyttUser() {

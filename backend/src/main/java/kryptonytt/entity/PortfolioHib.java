@@ -3,12 +3,13 @@ package kryptonytt.entity;
 import kryptonytt.domain.Asset;
 import kryptonytt.domain.Portfolio;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
 @Table(name = "PORTFOLIO")
-public class PortfolioHib {
+public class PortfolioHib implements Serializable {
 
     @Id
     @Column(nullable = false, unique=true)

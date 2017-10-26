@@ -1,33 +1,68 @@
 package kryptonytt.service;
 
+import kryptonytt.domain.Asset;
 import kryptonytt.domain.KryptonyttUser;
 import kryptonytt.domain.Portfolio;
+import kryptonytt.entity.AssetHib;
 import kryptonytt.entity.KryptonyttUserHib;
 import kryptonytt.entity.PortfolioHib;
+import kryptonytt.exception.PortfolioNotFound;
+import kryptonytt.repository.AssetRepository;
 import kryptonytt.repository.PortfolioRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Service
-@Transactional
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final UserService userService;
+    private final AssetRepository assetRepository;
 
-    public PortfolioService(PortfolioRepository portfolioRepository, UserService userService) {
+    public PortfolioService(PortfolioRepository portfolioRepository, UserService userService, AssetRepository assetRepository) {
         this.portfolioRepository = portfolioRepository;
         this.userService = userService;
+        this.assetRepository = assetRepository;
     }
 
-    public Portfolio createPortfolio(String portfolioName, Long userId, boolean isPublic) {
+    @Transactional
+    public void addAssetsToPortfolio(String portfolioName, KryptonyttUser user, Collection<Asset> assets) {
+
+        final Portfolio existingPortfolio = findPortfolio(portfolioName, user.getId());
+        if (existingPortfolio == null) {
+            throw new PortfolioNotFound(portfolioName, user.getUsername());
+        }
+
+        PortfolioHib portfolioExample = new PortfolioHib();
+        portfolioExample.setId(existingPortfolio.getId());
+
+        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getName(), portfolioExample, asset.getAmount())));
+
+    }
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    public Portfolio addAssetsToPortfolio(String portfolioName, KryptonyttUser user, Collection<Asset> assets) {
+//
+//        final Portfolio existingPortfolio = findPortfolio(portfolioName, user.getId());
+//        if (existingPortfolio == null) {
+//            throw new PortfolioNotFound(portfolioName, user.getUsername());
+//        }
+//
+//        PortfolioHib portfolioExample = new PortfolioHib();
+//        portfolioExample.setId(existingPortfolio.getId());
+//
+//        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getName(), portfolioExample, asset.getAmount())));
+//        return existingPortfolio;
+//    }
+
+    @Transactional
+    public Portfolio createPortfolio(String portfolioName, KryptonyttUser user, boolean isPublic) {
         KryptonyttUserHib userExample = new KryptonyttUserHib();
-        userExample.setId(userId);
+        userExample.setId(user.getId());
         PortfolioHib portfolio = new PortfolioHib();
         portfolio.setName(portfolioName);
         portfolio.setUser(userExample);

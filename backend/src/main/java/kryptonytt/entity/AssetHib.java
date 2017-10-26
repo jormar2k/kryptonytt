@@ -65,9 +65,6 @@ public class AssetHib {
     }
 
     public static Asset toAsset(AssetHib assetHib) {
-        Asset asset = new Asset();
-        asset.setName(assetHib.getName());
-        asset.setAmount(assetHib.getAmount());
-        return asset;
+        return new Asset(assetHib.getName(), assetHib.getAmount());
     }
 }

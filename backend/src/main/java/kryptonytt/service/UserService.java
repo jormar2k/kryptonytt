@@ -6,11 +6,10 @@ import kryptonytt.exception.UserNotFound;
 import kryptonytt.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 @Service
-@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -21,6 +20,7 @@ public class UserService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    @Transactional
     public KryptonyttUser createUser(KryptonyttUser kryptonyttUser) {
         KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib();
         kryptonyttUserHib.setUsername(kryptonyttUser.getUsername());
@@ -29,7 +29,7 @@ public class UserService {
         return KryptonyttUserHib.toKryptonyttUser(saved);
     }
 
-
+    @Transactional
     public void deleteUser(String username) {
         KryptonyttUserHib userExample = new KryptonyttUserHib();
         userExample.setUsername(username);

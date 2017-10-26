@@ -1,19 +1,28 @@
 package kryptonytt.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import kryptonytt.rest.View;
 
 import java.math.BigDecimal;
 
 public class Asset {
 
+    @JsonView(View.Simple.class)
     private String name;
 
+    @JsonView(View.Simple.class)
     private BigDecimal amount;
 
     @JsonIgnore
     private Portfolio portfolio;
 
     public Asset() {
+    }
+
+    public Asset(String name, BigDecimal amount) {
+        this.name = name;
+        this.amount = amount;
     }
 
     public String getName() {
