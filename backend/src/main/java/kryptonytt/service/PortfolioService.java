@@ -41,23 +41,9 @@ public class PortfolioService {
         PortfolioHib portfolioExample = new PortfolioHib();
         portfolioExample.setId(existingPortfolio.getId());
 
-        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getName(), portfolioExample, asset.getAmount())));
+        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getIdentifier(), portfolioExample, asset.getAmount())));
 
     }
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-//    public Portfolio addAssetsToPortfolio(String portfolioName, KryptonyttUser user, Collection<Asset> assets) {
-//
-//        final Portfolio existingPortfolio = findPortfolio(portfolioName, user.getId());
-//        if (existingPortfolio == null) {
-//            throw new PortfolioNotFound(portfolioName, user.getUsername());
-//        }
-//
-//        PortfolioHib portfolioExample = new PortfolioHib();
-//        portfolioExample.setId(existingPortfolio.getId());
-//
-//        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getName(), portfolioExample, asset.getAmount())));
-//        return existingPortfolio;
-//    }
 
     @Transactional
     public Portfolio createPortfolio(String portfolioName, KryptonyttUser user, boolean isPublic) {

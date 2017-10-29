@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 public class Asset {
 
     @JsonView(View.Simple.class)
-    private String name;
+    private String identifier;
 
     @JsonView(View.Simple.class)
     private BigDecimal amount;
@@ -20,16 +20,16 @@ public class Asset {
     public Asset() {
     }
 
-    public Asset(String name, BigDecimal amount) {
-        this.name = name;
+    public Asset(String identifier, BigDecimal amount) {
+        this.identifier = identifier;
         this.amount = amount;
     }
 
-    public String getName() {
-        return name;
+    public String getIdentifier() {
+        return identifier;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
     public BigDecimal getAmount() {
         return amount;

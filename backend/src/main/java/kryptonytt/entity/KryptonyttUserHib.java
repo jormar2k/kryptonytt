@@ -5,7 +5,7 @@ import kryptonytt.domain.KryptonyttUser;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "KRYPTONYTT_USER")
+@Table(name = "KRYPTONYTT_USERS")
 public class KryptonyttUserHib {
 
     @Id

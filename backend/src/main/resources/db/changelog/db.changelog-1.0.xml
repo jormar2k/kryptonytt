@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="kryptonytt" id="changelog-1.0.1">
+        <createTable tableName="kryptonytt_users">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="kryptonytt" id="changelog-1.0.2">
+        <createTable tableName="portfolios">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="is_public" type="BOOLEAN">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="true"
+                             primaryKey="false"
+                             unique="false"
+                             foreignKeyName="fk_kryptonytt_user_id"
+                             references="kryptonytt_users(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="kryptonytt" id="changelog-1.0.3">
+        <createTable tableName="assets">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="amount" type="DECIMAL">
+                <constraints nullable="true" primaryKey="false" unique="false"/>
+            </column>
+            <column name="identifier" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="portfolio_id" type="BIGINT">
+                <constraints nullable="true"
+                             primaryKey="false"
+                             unique="false"
+                             foreignKeyName="fk_portfolio_id"
+                             references="portfolios(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

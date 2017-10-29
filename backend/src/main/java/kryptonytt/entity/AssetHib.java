@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "ASSET")
+@Table(name = "ASSETS")
 public class AssetHib {
 
     @Id
@@ -15,7 +15,7 @@ public class AssetHib {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String identifier;
 
     @Column
     private BigDecimal amount;
@@ -26,8 +26,8 @@ public class AssetHib {
     protected AssetHib() {
     }
 
-    public AssetHib(String name, PortfolioHib portfolio, BigDecimal amount) {
-        this.name = name;
+    public AssetHib(String identifier, PortfolioHib portfolio, BigDecimal amount) {
+        this.identifier = identifier;
         this.portfolio = portfolio;
         this.amount = amount;
     }
@@ -40,12 +40,12 @@ public class AssetHib {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public BigDecimal getAmount() {
@@ -65,6 +65,6 @@ public class AssetHib {
     }
 
     public static Asset toAsset(AssetHib assetHib) {
-        return new Asset(assetHib.getName(), assetHib.getAmount());
+        return new Asset(assetHib.getIdentifier(), assetHib.getAmount());
     }
 }

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @SpringBootApplication
-//@EnableJpaRepositories(repositoryBaseClass = BaseRepositoryImpl.class, basePackages = {"kryptonytt.repository"})
 @EnableTransactionManagement
 @EntityScan("kryptonytt.entity")
 public class Application {
@@ -43,21 +42,21 @@ public class Application {
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
 
         return args -> {
-            KryptonyttUser user = new KryptonyttUser();
-            user.setUsername("tobbe");
-            user.setPassword("123");
-            KryptonyttUser tobbe = userService.createUser(user);
-
-            user = new KryptonyttUser();
-            user.setUsername("jøgge");
-            user.setPassword("123");
-            KryptonyttUser jøgge = userService.createUser(user);
-
-            Portfolio winfolio = portfolioService.createPortfolio("winfolio", tobbe, true);
-            Collection<Asset> assets = new ArrayList<>();
-            assets.add(new Asset("IO", new BigDecimal(321)));
-            assets.add(new Asset("BTC", new BigDecimal(321)));
-            portfolioService.addAssetsToPortfolio(winfolio.getName(), tobbe, assets);
+//            KryptonyttUser user = new KryptonyttUser();
+//            user.setUsername("tobbe");
+//            user.setPassword("123");
+//            KryptonyttUser tobbe = userService.createUser(user);
+//
+//            user = new KryptonyttUser();
+//            user.setUsername("jøgge");
+//            user.setPassword("123");
+//            KryptonyttUser jøgge = userService.createUser(user);
+//
+//            Portfolio winfolio = portfolioService.createPortfolio("winfolio", tobbe, true);
+//            Collection<Asset> assets = new ArrayList<>();
+//            assets.add(new Asset("IO", new BigDecimal(321)));
+//            assets.add(new Asset("BTC", new BigDecimal(321)));
+//            portfolioService.addAssetsToPortfolio(winfolio.getName(), tobbe, assets);
 
         };
     }

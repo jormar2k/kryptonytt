@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "PORTFOLIO")
+@Table(name = "PORTFOLIOS")
 public class PortfolioHib implements Serializable {
 
     @Id
