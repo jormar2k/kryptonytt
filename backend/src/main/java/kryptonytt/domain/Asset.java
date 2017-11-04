@@ -8,14 +8,16 @@ import java.math.BigDecimal;
 
 public class Asset {
 
-    @JsonView(View.Simple.class)
+    private Long id;
+
     private String identifier;
 
-    @JsonView(View.Simple.class)
     private BigDecimal amount;
 
     @JsonIgnore
     private Portfolio portfolio;
+
+    private Boolean custom;
 
     public Asset() {
     }
@@ -42,5 +44,17 @@ public class Asset {
     }
     public void setPortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
+    }
+    public void setCustom(Boolean custom) {
+        this.custom = custom;
+    }
+    public Boolean getCustom() {
+        return custom;
+    }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 }

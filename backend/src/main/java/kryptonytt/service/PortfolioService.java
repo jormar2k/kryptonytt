@@ -21,45 +21,73 @@ import java.util.List;
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
-    private final UserService userService;
     private final AssetRepository assetRepository;
+    private final UserService userService;
 
     public PortfolioService(PortfolioRepository portfolioRepository, UserService userService, AssetRepository assetRepository) {
         this.portfolioRepository = portfolioRepository;
-        this.userService = userService;
         this.assetRepository = assetRepository;
+        this.userService = userService;
     }
 
     @Transactional
-    public void addAssetsToPortfolio(String portfolioName, KryptonyttUser user, Collection<Asset> assets) {
+    public Portfolio refreshPortfolio(String portfolioName, Portfolio portfolio) {
 
-        final Portfolio existingPortfolio = findPortfolio(portfolioName, user.getId());
+        final Portfolio existingPortfolio = findPortfolio(portfolioName, portfolio.getUser());
+
+        if (existingPortfolio == null) {
+            throw new PortfolioNotFound(portfolioName, portfolio.getUser().getUsername());
+        }
+
+        for (Asset ass : existingPortfolio.getAssets()) {
+            AssetHib deleteCondition = new AssetHib(ass);
+            deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
+            assetRepository.delete(deleteCondition);
+        }
+
+        PortfolioHib portfolioHib = new PortfolioHib(portfolio);
+        portfolioHib.setId(existingPortfolio.getId());
+        portfolioHib.setUser(new KryptonyttUserHib(portfolio.getUser()));
+
+        Collection<AssetHib> assetHibs = new ArrayList<>();
+        for (Asset ass : portfolio.getAssets()) {
+            AssetHib assetHib = new AssetHib(ass);
+            assetHib.setPortfolio(portfolioHib);
+            assetHibs.add(assetHib);
+        }
+        portfolioHib.setAssets(assetHibs);
+
+        portfolioRepository.save(portfolioHib);
+        return findPortfolio(portfolioName, portfolio.getUser());
+    }
+
+    @Transactional
+    public void deletePortfolio(String portfolioName, KryptonyttUser user) {
+        final Portfolio existingPortfolio = findPortfolio(portfolioName, user);
+
         if (existingPortfolio == null) {
             throw new PortfolioNotFound(portfolioName, user.getUsername());
         }
 
-        PortfolioHib portfolioExample = new PortfolioHib();
-        portfolioExample.setId(existingPortfolio.getId());
-
-        assets.forEach(asset -> assetRepository.saveAndFlush(new AssetHib(asset.getIdentifier(), portfolioExample, asset.getAmount())));
+        PortfolioHib portfolioExample = new PortfolioHib(existingPortfolio);
+        portfolioRepository.delete(portfolioExample);
 
     }
 
     @Transactional
     public Portfolio createPortfolio(String portfolioName, KryptonyttUser user, boolean isPublic) {
-        KryptonyttUserHib userExample = new KryptonyttUserHib();
-        userExample.setId(user.getId());
-        PortfolioHib portfolio = new PortfolioHib();
-        portfolio.setName(portfolioName);
-        portfolio.setUser(userExample);
-        portfolio.setPublic(isPublic);
-        portfolio = portfolioRepository.save(portfolio);
-        return PortfolioHib.toPortfolio(portfolio);
+        KryptonyttUserHib userExample = new KryptonyttUserHib(user);
+        PortfolioHib portfolioHib = new PortfolioHib();
+        portfolioHib.setName(portfolioName);
+        portfolioHib.setUser(userExample);
+        portfolioHib.setPublic(isPublic);
+        portfolioHib = portfolioRepository.save(portfolioHib);
+        return PortfolioHib.toPortfolio(portfolioHib);
     }
 
-    public Portfolio findPortfolio(String name, Long userId) {
+    public Portfolio findPortfolio(String name, KryptonyttUser user) {
         KryptonyttUserHib userExample = new KryptonyttUserHib();
-        userExample.setId(userId);
+        userExample.setId(user.getId());
         PortfolioHib portFolioExample = new PortfolioHib();
         portFolioExample.setName(name);
         portFolioExample.setUser(userExample);
@@ -68,6 +96,7 @@ public class PortfolioService {
         if (portfolioHib == null) {
             return null;
         }
+
         return PortfolioHib.toPortfolio(portfolioHib);
     }
 

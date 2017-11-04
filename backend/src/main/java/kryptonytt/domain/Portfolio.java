@@ -1,27 +1,22 @@
 package kryptonytt.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import kryptonytt.rest.View;
 
 import java.util.Collection;
 
 public class Portfolio {
 
-    @JsonIgnore
     private Long id;
 
-    @JsonView(View.Simple.class)
     private String name;
 
-    @JsonView(View.Simple.class)
     private Boolean isPublic;
 
-    @JsonView(View.Simple.class)
+    private String lastModified;
+
+    @JsonIgnore
     private KryptonyttUser user;
 
-    @JsonView(View.Simple.class)
     private Collection<Asset> assets;
 
     public Portfolio() {
@@ -56,5 +51,11 @@ public class Portfolio {
     }
     public void setAssets(Collection<Asset> assets) {
         this.assets = assets;
+    }
+    public String getLastModified() {
+        return lastModified;
+    }
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
     }
 }

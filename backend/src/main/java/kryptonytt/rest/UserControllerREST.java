@@ -1,7 +1,11 @@
 package kryptonytt.rest;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import io.jsonwebtoken.Jwts;
 import kryptonytt.domain.KryptonyttUser;
+import kryptonytt.security.SecurityConstants;
 import kryptonytt.service.UserService;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
 public class UserControllerREST {
 
     private final UserService userService;
+    private final Environment environment;
 
-    public UserControllerREST(UserService userService) {
+    public UserControllerREST(UserService userService, Environment environment) {
         this.userService = userService;
-    }
-
-    @GetMapping(value ="/{username}")
-    public KryptonyttUser getUser(@PathVariable String username) {
-        return userService.findUser(username);
+        this.environment = environment;
     }
 
     @PostMapping("/sign-up")
@@ -27,9 +28,27 @@ public class UserControllerREST {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @DeleteMapping(value ="/{username}")
-    public ResponseEntity deleteUser(@PathVariable String username) {
-        userService.deleteUser(username);
+//    @DeleteMapping(value ="/{username}")
+//    public ResponseEntity deleteUser(@PathVariable String username) {
+//        userService.deleteUser(username);
+//        return new ResponseEntity(HttpStatus.OK);
+//    }
+
+    @PutMapping(value ="/settings")
+    public ResponseEntity updateSettings(@RequestHeader(value="Authorization") String token, @RequestBody Object settings) {
+        KryptonyttUser user = getKryptonyttUserFromToken(token);
+        user.setSettings(settings.toString());
+        userService.updateUserSettings(user);
+        String s = settings.toString();
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private KryptonyttUser getKryptonyttUserFromToken(@RequestHeader(value = "Authorization") String token) {
+        String username = Jwts.parser()
+                .setSigningKey(environment.getProperty("jwt.secret"))
+                .parseClaimsJws(token.replace(SecurityConstants.TOKEN_PREFIX, ""))
+                .getBody()
+                .getSubject();
+        return userService.findUser(username);
     }
 }

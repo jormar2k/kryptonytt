@@ -30,6 +30,13 @@ public class UserService {
     }
 
     @Transactional
+    public KryptonyttUser updateUserSettings(KryptonyttUser kryptonyttUser) {
+        KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib(kryptonyttUser);
+        KryptonyttUserHib saved = userRepository.save(kryptonyttUserHib);
+        return KryptonyttUserHib.toKryptonyttUser(saved);
+    }
+
+    @Transactional
     public void deleteUser(String username) {
         KryptonyttUserHib userExample = new KryptonyttUserHib();
         userExample.setUsername(username);

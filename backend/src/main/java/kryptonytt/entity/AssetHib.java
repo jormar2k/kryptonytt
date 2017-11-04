@@ -10,61 +10,67 @@ import java.math.BigDecimal;
 public class AssetHib {
 
     @Id
-    @Column(nullable = false, unique=true)
+    @Column
     @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String identifier;
 
     @Column
     private BigDecimal amount;
 
+    @Column
+    private Boolean custom;
+
     @ManyToOne
     private PortfolioHib portfolio;
 
-    protected AssetHib() {
+    public AssetHib() {
     }
 
-    public AssetHib(String identifier, PortfolioHib portfolio, BigDecimal amount) {
-        this.identifier = identifier;
-        this.portfolio = portfolio;
-        this.amount = amount;
+    public AssetHib(Asset ass) {
+        this.setId(ass.getId());
+        this.setIdentifier(ass.getIdentifier());
+        this.setAmount(ass.getAmount());
+        this.setCustom(ass.getCustom());
     }
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public String getIdentifier() {
         return identifier;
     }
-
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
     }
-
     public BigDecimal getAmount() {
         return amount;
     }
-
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
-
     public PortfolioHib getPortfolio() {
         return portfolio;
     }
-
     public void setPortfolio(PortfolioHib portfolio) {
         this.portfolio = portfolio;
     }
+    public Boolean getCustom() {
+        return custom;
+    }
+    public void setCustom(Boolean custom) {
+        this.custom = custom;
+    }
 
     public static Asset toAsset(AssetHib assetHib) {
-        return new Asset(assetHib.getIdentifier(), assetHib.getAmount());
+        Asset asset = new Asset(assetHib.getIdentifier(), assetHib.getAmount());
+        asset.setCustom(assetHib.getCustom());
+        asset.setId(assetHib.getId());
+        return asset;
     }
 }

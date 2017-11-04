@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -21,6 +22,7 @@ import java.util.Collection;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableJpaAuditing
 @EntityScan("kryptonytt.entity")
 public class Application {
 
@@ -56,7 +58,7 @@ public class Application {
 //            Collection<Asset> assets = new ArrayList<>();
 //            assets.add(new Asset("IO", new BigDecimal(321)));
 //            assets.add(new Asset("BTC", new BigDecimal(321)));
-//            portfolioService.addAssetsToPortfolio(winfolio.getName(), tobbe, assets);
+//            portfolioService.refreshPortfolio(winfolio.getName(), tobbe, assets);
 
         };
     }

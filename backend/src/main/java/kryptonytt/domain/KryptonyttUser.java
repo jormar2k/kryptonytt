@@ -14,6 +14,8 @@ public class KryptonyttUser {
 
     private String password;
 
+    private String settings;
+
     public KryptonyttUser() {
     }
 
@@ -39,5 +41,13 @@ public class KryptonyttUser {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSettings() {
+        return settings;
+    }
+
+    public void setSettings(String settings) {
+        this.settings = settings;
     }
 }
