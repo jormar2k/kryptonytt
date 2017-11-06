@@ -14,6 +14,8 @@ public class Portfolio {
 
     private String lastModified;
 
+    private String created;
+
     @JsonIgnore
     private KryptonyttUser user;
 
@@ -57,5 +59,11 @@ public class Portfolio {
     }
     public void setLastModified(String lastModified) {
         this.lastModified = lastModified;
+    }
+    public String getCreated() {
+        return created;
+    }
+    public void setCreated(String created) {
+        this.created = created;
     }
 }

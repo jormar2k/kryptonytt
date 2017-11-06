@@ -1,9 +1,12 @@
 package kryptonytt.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import kryptonytt.domain.KryptonyttUser;
 import kryptonytt.entity.KryptonyttUserHib;
+import kryptonytt.service.UserService;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,10 +30,12 @@ import static kryptonytt.security.SecurityConstants.TOKEN_PREFIX;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final Environment environment;
     private final AuthenticationManager authenticationManager;
+    private final UserService userService;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, Environment environment) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, Environment environment, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.environment = environment;
+        this.userService = userService;
     }
 
     @Override
@@ -62,5 +67,10 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .signWith(SignatureAlgorithm.HS512, environment.getProperty("jwt.secret"))
                 .compact();
         res.addHeader(HEADER_STRING, TOKEN_PREFIX + token);
+
+        KryptonyttUser user = userService.findUser(((User) auth.getPrincipal()).getUsername());
+        String response = new Gson().toJson(user);
+        res.addHeader("Content-Type", "application/json");
+        res.getWriter().print(response);
     }
 }

@@ -30,10 +30,13 @@ public class AssetHib {
     }
 
     public AssetHib(Asset ass) {
-        this.setId(ass.getId());
-        this.setIdentifier(ass.getIdentifier());
-        this.setAmount(ass.getAmount());
-        this.setCustom(ass.getCustom());
+        this.identifier = ass.getIdentifier();
+        this.amount = ass.getAmount();
+        this.custom = ass.getCustom();
+    }
+
+    public AssetHib(Long id) {
+        this.id = id;
     }
 
     public Long getId() {

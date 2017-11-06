@@ -6,6 +6,7 @@ import kryptonytt.domain.Portfolio;
 import kryptonytt.entity.AssetHib;
 import kryptonytt.entity.KryptonyttUserHib;
 import kryptonytt.entity.PortfolioHib;
+import kryptonytt.exception.PortfolioExists;
 import kryptonytt.exception.PortfolioNotFound;
 import kryptonytt.repository.AssetRepository;
 import kryptonytt.repository.PortfolioRepository;
@@ -13,8 +14,11 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,7 +35,7 @@ public class PortfolioService {
     }
 
     @Transactional
-    public Portfolio refreshPortfolio(String portfolioName, Portfolio portfolio) {
+    public Portfolio refreshPortfolio(String portfolioName, Portfolio portfolio) throws ParseException {
 
         final Portfolio existingPortfolio = findPortfolio(portfolioName, portfolio.getUser());
 
@@ -39,8 +43,16 @@ public class PortfolioService {
             throw new PortfolioNotFound(portfolioName, portfolio.getUser().getUsername());
         }
 
+        if (!portfolioName.equals(portfolio.getName())) {
+            final Portfolio portfolioWithNewName = findPortfolio(portfolio.getName(), portfolio.getUser());
+            if (portfolioWithNewName != null) {
+                throw new PortfolioExists(portfolioWithNewName.getName(), portfolio.getUser().getUsername());
+            }
+        }
+
         for (Asset ass : existingPortfolio.getAssets()) {
-            AssetHib deleteCondition = new AssetHib(ass);
+            AssetHib deleteCondition = new AssetHib(ass.getId());
+            deleteCondition.setId(ass.getId());
             deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
             assetRepository.delete(deleteCondition);
         }
@@ -48,6 +60,10 @@ public class PortfolioService {
         PortfolioHib portfolioHib = new PortfolioHib(portfolio);
         portfolioHib.setId(existingPortfolio.getId());
         portfolioHib.setUser(new KryptonyttUserHib(portfolio.getUser()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = sdf.parse(existingPortfolio.getCreated());
+        portfolioHib.setCreated(date);
 
         Collection<AssetHib> assetHibs = new ArrayList<>();
         for (Asset ass : portfolio.getAssets()) {
@@ -58,7 +74,7 @@ public class PortfolioService {
         portfolioHib.setAssets(assetHibs);
 
         portfolioRepository.save(portfolioHib);
-        return findPortfolio(portfolioName, portfolio.getUser());
+        return findPortfolio(portfolioHib.getName(), portfolio.getUser());
     }
 
     @Transactional

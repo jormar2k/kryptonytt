@@ -2,11 +2,13 @@ package kryptonytt.entity;
 
 import kryptonytt.domain.Asset;
 import kryptonytt.domain.Portfolio;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -28,7 +30,12 @@ public class PortfolioHib implements Serializable {
     private Boolean isPublic;
 
     @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private Collection<AssetHib> assets = new ArrayList<>();
@@ -85,6 +92,12 @@ public class PortfolioHib implements Serializable {
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
     }
+    public Date getCreated() {
+        return created;
+    }
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
     public static Portfolio toPortfolio(PortfolioHib portfolioHib) {
         Portfolio portfolio = new Portfolio();
@@ -92,7 +105,12 @@ public class PortfolioHib implements Serializable {
         portfolio.setName(portfolioHib.getName());
         portfolio.setUser(KryptonyttUserHib.toKryptonyttUser(portfolioHib.getUser()));
         portfolio.setPublic(portfolioHib.isPublic());
-        portfolio.setLastModified(portfolioHib.getLastModified().toString());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String lastModified = sdf.format(portfolioHib.getLastModified());
+        portfolio.setLastModified(lastModified);
+        String dateCreated = sdf.format(portfolioHib.getLastModified());
+        portfolio.setCreated(dateCreated);
 
         Collection<Asset> assets = new ArrayList<>();
 

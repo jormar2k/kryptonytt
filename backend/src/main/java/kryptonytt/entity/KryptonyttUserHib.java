@@ -1,10 +1,14 @@
 package kryptonytt.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import kryptonytt.domain.KryptonyttUser;
 import kryptonytt.domain.Portfolio;
 
 import javax.persistence.*;
+import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Map;
 
 @Entity
 @Table(name = "KRYPTONYTT_USERS")
@@ -34,7 +38,7 @@ public class KryptonyttUserHib {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.settings = user.getSettings();
+        this.settings = new Gson().toJson(user.getSettings());
     }
 
     public void setUsername(String username) {
@@ -73,7 +77,18 @@ public class KryptonyttUserHib {
         kryptonyttUser.setId(kryptonyttUserHib.getId());
         kryptonyttUser.setUsername(kryptonyttUserHib.getUsername());
         kryptonyttUser.setPassword(kryptonyttUserHib.getPassword());
-        kryptonyttUser.setSettings(kryptonyttUserHib.getSettings());
+
+        Type type = new TypeToken<Map<String, Object>>(){}.getType();
+        Map<String, Object> settingsMap = new Gson().fromJson(kryptonyttUserHib.getSettings(), type);
+        for (Map.Entry<String, Object>  entry : settingsMap.entrySet()) {
+            Object value = entry.getValue();
+            if (value.equals("true")) {
+                settingsMap.put(entry.getKey(), true);
+            } else if (value.equals("false")) {
+                settingsMap.put(entry.getKey(), false);
+            }
+        }
+        kryptonyttUser.setSettings(settingsMap);
         return kryptonyttUser;
     }
 

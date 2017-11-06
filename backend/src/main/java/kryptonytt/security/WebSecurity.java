@@ -1,5 +1,6 @@
 package kryptonytt.security;
 
+import kryptonytt.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
@@ -20,11 +21,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final Environment environment;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserService userService;
 
-    public WebSecurity(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder, Environment environment) {
+    public WebSecurity(UserDetailsService userDetailsService,
+                       BCryptPasswordEncoder bCryptPasswordEncoder,
+                       Environment environment,
+                       UserService userService) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.environment = environment;
+        this.userService = userService;
     }
 
     @Override
@@ -33,7 +39,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, SIGN_UP_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(), environment))
+                .addFilter(new JWTAuthenticationFilter(authenticationManager(), environment, userService))
                 .addFilter(new JWTAuthorizationFilter(authenticationManager(), environment));
     }
 

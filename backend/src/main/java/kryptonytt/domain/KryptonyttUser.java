@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import kryptonytt.rest.View;
 
+import java.util.Map;
+
 public class KryptonyttUser {
 
     @JsonIgnore
@@ -14,7 +16,7 @@ public class KryptonyttUser {
 
     private String password;
 
-    private String settings;
+    private Map<String, Object> settings;
 
     public KryptonyttUser() {
     }
@@ -43,11 +45,11 @@ public class KryptonyttUser {
         this.id = id;
     }
 
-    public String getSettings() {
+    public Map<String, Object> getSettings() {
         return settings;
     }
 
-    public void setSettings(String settings) {
+    public void setSettings(Map<String, Object> settings) {
         this.settings = settings;
     }
 }

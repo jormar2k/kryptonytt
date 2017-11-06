@@ -1,6 +1,5 @@
 package kryptonytt.rest;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.jsonwebtoken.Jwts;
 import kryptonytt.domain.KryptonyttUser;
 import kryptonytt.security.SecurityConstants;
@@ -9,6 +8,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -35,12 +36,19 @@ public class UserControllerREST {
 //    }
 
     @PutMapping(value ="/settings")
-    public ResponseEntity updateSettings(@RequestHeader(value="Authorization") String token, @RequestBody Object settings) {
+    public ResponseEntity updateSettings(@RequestHeader(value="Authorization") String token, @RequestBody Map<String, Object> settings) {
         KryptonyttUser user = getKryptonyttUserFromToken(token);
-        user.setSettings(settings.toString());
-        userService.updateUserSettings(user);
-        String s = settings.toString();
-        return new ResponseEntity(HttpStatus.OK);
+        user.setSettings(settings);
+
+        Map<String, Object> updatedSettings = userService.updateUserSettings(user).getSettings();
+
+        return new ResponseEntity<>(updatedSettings, HttpStatus.OK);
+    }
+
+    @GetMapping(value ="/settings")
+    public ResponseEntity getUserSettings(@RequestHeader(value="Authorization") String token) {
+        KryptonyttUser user = getKryptonyttUserFromToken(token);
+        return new ResponseEntity<>(user.getSettings(), HttpStatus.OK);
     }
 
     private KryptonyttUser getKryptonyttUserFromToken(@RequestHeader(value = "Authorization") String token) {

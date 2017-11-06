@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.Collection;
 
 @RestController
@@ -60,7 +61,7 @@ public class PortfolioControllerREST {
     @PutMapping(value ="/{name}")
     public ResponseEntity refreshPortfolios(@RequestHeader(value="Authorization") String token,
                                             @PathVariable String name,
-                                            @RequestBody Portfolio portfolio) {
+                                            @RequestBody Portfolio portfolio) throws ParseException {
 
         KryptonyttUser user = getKryptonyttUserFromToken(token);
         portfolio.setUser(user);

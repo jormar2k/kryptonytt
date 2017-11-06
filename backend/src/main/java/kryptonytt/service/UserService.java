@@ -8,6 +8,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Service
 public class UserService {
@@ -22,9 +26,18 @@ public class UserService {
 
     @Transactional
     public KryptonyttUser createUser(KryptonyttUser kryptonyttUser) {
-        KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib();
-        kryptonyttUserHib.setUsername(kryptonyttUser.getUsername());
+        if (kryptonyttUser.getSettings() == null) {
+            Map<String, Object> defaultSettings = new HashMap<>();
+            defaultSettings.put("defaultCurrency", "USD");
+            defaultSettings.put("currencies", Arrays.asList("BTC"));
+            defaultSettings.put("nightmode", true);
+            kryptonyttUser.setSettings(defaultSettings);
+        }
+
+        KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib(kryptonyttUser);
         kryptonyttUserHib.setPassword(bCryptPasswordEncoder.encode(kryptonyttUser.getPassword()));
+
+
         KryptonyttUserHib saved = userRepository.save(kryptonyttUserHib);
         return KryptonyttUserHib.toKryptonyttUser(saved);
     }
