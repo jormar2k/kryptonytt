@@ -1,12 +1,10 @@
 package kryptonytt.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import kryptonytt.rest.View;
 
 import java.math.BigDecimal;
 
-public class Asset {
+public class Fiat {
 
     private Long id;
 
@@ -14,17 +12,13 @@ public class Asset {
 
     private BigDecimal amount;
 
+    private String currency;
+
     @JsonIgnore
     private Portfolio portfolio;
 
-    private Boolean custom;
 
-    public Asset() {
-    }
-
-    public Asset(String identifier, BigDecimal amount) {
-        this.identifier = identifier;
-        this.amount = amount;
+    public Fiat() {
     }
 
     public String getIdentifier() {
@@ -45,16 +39,16 @@ public class Asset {
     public void setPortfolio(Portfolio portfolio) {
         this.portfolio = portfolio;
     }
-    public void setCustom(Boolean custom) {
-        this.custom = custom;
-    }
-    public Boolean getCustom() {
-        return custom;
-    }
     public Long getId() {
         return id;
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    public String getCurrency() {
+        return currency;
+    }
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 }

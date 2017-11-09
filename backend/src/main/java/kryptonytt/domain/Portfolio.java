@@ -19,7 +19,9 @@ public class Portfolio {
     @JsonIgnore
     private KryptonyttUser user;
 
-    private Collection<Asset> assets;
+    private Collection<Coin> coins;
+    private Collection<CustomAsset> customAssets;
+    private Collection<Fiat> fiat;
 
     public Portfolio() {
     }
@@ -48,11 +50,11 @@ public class Portfolio {
     public void setPublic(Boolean isPublic) {
         this.isPublic = isPublic;
     }
-    public Collection<Asset> getAssets() {
-        return assets;
+    public Collection<Coin> getCoins() {
+        return coins;
     }
-    public void setAssets(Collection<Asset> assets) {
-        this.assets = assets;
+    public void setCoins(Collection<Coin> coins) {
+        this.coins = coins;
     }
     public String getLastModified() {
         return lastModified;
@@ -65,5 +67,17 @@ public class Portfolio {
     }
     public void setCreated(String created) {
         this.created = created;
+    }
+    public Collection<CustomAsset> getCustomAssets() {
+        return customAssets;
+    }
+    public void setCustomAssets(Collection<CustomAsset> customAssets) {
+        this.customAssets = customAssets;
+    }
+    public Collection<Fiat> getFiat() {
+        return fiat;
+    }
+    public void setFiat(Collection<Fiat> fiat) {
+        this.fiat = fiat;
     }
 }

@@ -1,14 +1,12 @@
 package kryptonytt.service;
 
-import kryptonytt.domain.Asset;
-import kryptonytt.domain.KryptonyttUser;
-import kryptonytt.domain.Portfolio;
-import kryptonytt.entity.AssetHib;
-import kryptonytt.entity.KryptonyttUserHib;
-import kryptonytt.entity.PortfolioHib;
+import kryptonytt.domain.*;
+import kryptonytt.entity.*;
 import kryptonytt.exception.PortfolioExists;
 import kryptonytt.exception.PortfolioNotFound;
-import kryptonytt.repository.AssetRepository;
+import kryptonytt.repository.CoinRepository;
+import kryptonytt.repository.CustomAssetRepository;
+import kryptonytt.repository.FiatRepository;
 import kryptonytt.repository.PortfolioRepository;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -25,13 +23,22 @@ import java.util.List;
 public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
-    private final AssetRepository assetRepository;
+    private final CoinRepository coinRepository;
+    private final CustomAssetRepository customAssetRepository;
+    private final FiatRepository fiatRepository;
     private final UserService userService;
 
-    public PortfolioService(PortfolioRepository portfolioRepository, UserService userService, AssetRepository assetRepository) {
+    public PortfolioService(PortfolioRepository portfolioRepository,
+                            UserService userService,
+                            CoinRepository coinRepository,
+                            CustomAssetRepository customAssetRepository,
+                            FiatRepository fiatRepository) {
+
         this.portfolioRepository = portfolioRepository;
-        this.assetRepository = assetRepository;
+        this.coinRepository = coinRepository;
         this.userService = userService;
+        this.customAssetRepository = customAssetRepository;
+        this.fiatRepository = fiatRepository;
     }
 
     @Transactional
@@ -50,12 +57,9 @@ public class PortfolioService {
             }
         }
 
-        for (Asset ass : existingPortfolio.getAssets()) {
-            AssetHib deleteCondition = new AssetHib(ass.getId());
-            deleteCondition.setId(ass.getId());
-            deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
-            assetRepository.delete(deleteCondition);
-        }
+        deleteCoinsOnPortfolio(existingPortfolio);
+        deleteCustomAssetsOnPortfolio(existingPortfolio);
+        deleteFiatsOnPortfolio(existingPortfolio);
 
         PortfolioHib portfolioHib = new PortfolioHib(portfolio);
         portfolioHib.setId(existingPortfolio.getId());
@@ -65,16 +69,60 @@ public class PortfolioService {
         Date date = sdf.parse(existingPortfolio.getCreated());
         portfolioHib.setCreated(date);
 
-        Collection<AssetHib> assetHibs = new ArrayList<>();
-        for (Asset ass : portfolio.getAssets()) {
-            AssetHib assetHib = new AssetHib(ass);
-            assetHib.setPortfolio(portfolioHib);
-            assetHibs.add(assetHib);
-        }
-        portfolioHib.setAssets(assetHibs);
+        addAssetsToPortfolio(portfolio, portfolioHib);
 
         portfolioRepository.save(portfolioHib);
         return findPortfolio(portfolioHib.getName(), portfolio.getUser());
+    }
+
+    private void addAssetsToPortfolio(Portfolio portfolio, PortfolioHib portfolioHib) {
+        Collection<CoinHib> coinHibs = new ArrayList<>();
+        for (Coin ass : portfolio.getCoins()) {
+            CoinHib coinHib = new CoinHib(ass);
+            coinHib.setPortfolio(portfolioHib);
+            coinHibs.add(coinHib);
+        }
+        portfolioHib.setCoinHibs(coinHibs);
+
+        Collection<CustomAssetHib> customAssetHibs = new ArrayList<>();
+        for (CustomAsset custAss : portfolio.getCustomAssets()) {
+            CustomAssetHib customAssetHib = new CustomAssetHib(custAss);
+            customAssetHib.setPortfolio(portfolioHib);
+            customAssetHibs.add(customAssetHib);
+        }
+        portfolioHib.setCustomAssetHibs(customAssetHibs);
+
+        Collection<FiatHib> fiatHibs = new ArrayList<>();
+        for (Fiat fiat : portfolio.getFiat()) {
+            FiatHib fiatHib = new FiatHib(fiat);
+            fiatHib.setPortfolio(portfolioHib);
+            fiatHibs.add(fiatHib);
+        }
+        portfolioHib.setFiatHibs(fiatHibs);
+    }
+
+    private void deleteFiatsOnPortfolio(Portfolio existingPortfolio) {
+        for (Fiat fiat : existingPortfolio.getFiat()) {
+            FiatHib deleteCondition = new FiatHib(fiat.getId());
+            deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
+            fiatRepository.delete(deleteCondition);
+        }
+    }
+
+    private void deleteCustomAssetsOnPortfolio(Portfolio existingPortfolio) {
+        for (CustomAsset ass : existingPortfolio.getCustomAssets()) {
+            CustomAssetHib deleteCondition = new CustomAssetHib(ass.getId());
+            deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
+            customAssetRepository.delete(deleteCondition);
+        }
+    }
+
+    private void deleteCoinsOnPortfolio(Portfolio existingPortfolio) {
+        for (Coin ass : existingPortfolio.getCoins()) {
+            CoinHib deleteCondition = new CoinHib(ass.getId());
+            deleteCondition.setPortfolio(new PortfolioHib(existingPortfolio));
+            coinRepository.delete(deleteCondition);
+        }
     }
 
     @Transactional

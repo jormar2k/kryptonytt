@@ -17,6 +17,9 @@
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="false" unique="false"/>
             </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="true" primaryKey="false" unique="false"/>
+            </column>
             <column name="settings" type="VARCHAR(1000)">
                 <constraints nullable="true" primaryKey="false" unique="false"/>
             </column>
@@ -51,7 +54,7 @@
     </changeSet>
 
     <changeSet author="kryptonytt" id="changelog-1.0.3">
-        <createTable tableName="assets">
+        <createTable tableName="coins">
             <column name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" unique="true"/>
             </column>
@@ -61,7 +64,55 @@
             <column name="identifier" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="false" unique="false"/>
             </column>
-            <column name="custom" type="BOOLEAN">
+            <column name="portfolio_id" type="BIGINT">
+                <constraints nullable="true"
+                             primaryKey="false"
+                             unique="false"
+                             foreignKeyName="fk_portfolio_id"
+                             references="portfolios(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="kryptonytt" id="changelog-1.0.4">
+        <createTable tableName="fiats">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="amount" type="DECIMAL">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="identifier" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="portfolio_id" type="BIGINT">
+                <constraints nullable="true"
+                             primaryKey="false"
+                             unique="false"
+                             foreignKeyName="fk_portfolio_id"
+                             references="portfolios(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="kryptonytt" id="changelog-1.0.5">
+        <createTable tableName="custom_assets">
+            <column name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="amount" type="DECIMAL">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="price" type="DECIMAL">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="false" unique="false"/>
+            </column>
+            <column name="identifier" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="false" unique="false"/>
             </column>
             <column name="portfolio_id" type="BIGINT">

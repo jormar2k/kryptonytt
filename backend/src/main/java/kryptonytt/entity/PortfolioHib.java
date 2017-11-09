@@ -1,6 +1,8 @@
 package kryptonytt.entity;
 
-import kryptonytt.domain.Asset;
+import kryptonytt.domain.Coin;
+import kryptonytt.domain.CustomAsset;
+import kryptonytt.domain.Fiat;
 import kryptonytt.domain.Portfolio;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -38,7 +40,13 @@ public class PortfolioHib implements Serializable {
     private Date created;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    private Collection<AssetHib> assets = new ArrayList<>();
+    private Collection<CoinHib> coins = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    private Collection<CustomAssetHib> customAssetHibs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    private Collection<FiatHib> fiatHibs = new ArrayList<>();
 
     @ManyToOne
     private KryptonyttUserHib user;
@@ -80,11 +88,11 @@ public class PortfolioHib implements Serializable {
     public void setPublic(Boolean isPublic) {
         this.isPublic = isPublic;
     }
-    public Collection<AssetHib> getAssets() {
-        return assets;
+    public Collection<CoinHib> getCoinHibs() {
+        return coins;
     }
-    public void setAssets(Collection<AssetHib> assets) {
-        this.assets = assets;
+    public void setCoinHibs(Collection<CoinHib> assets) {
+        this.coins = assets;
     }
     public Date getLastModified() {
         return lastModified;
@@ -97,6 +105,18 @@ public class PortfolioHib implements Serializable {
     }
     public void setCreated(Date created) {
         this.created = created;
+    }
+    public Collection<CustomAssetHib> getCustomAssetHibs() {
+        return customAssetHibs;
+    }
+    public void setCustomAssetHibs(Collection<CustomAssetHib> customAssetHibs) {
+        this.customAssetHibs = customAssetHibs;
+    }
+    public Collection<FiatHib> getFiatHibs() {
+        return fiatHibs;
+    }
+    public void setFiatHibs(Collection<FiatHib> fiatHibs) {
+        this.fiatHibs = fiatHibs;
     }
 
     public static Portfolio toPortfolio(PortfolioHib portfolioHib) {
@@ -112,13 +132,23 @@ public class PortfolioHib implements Serializable {
         String dateCreated = sdf.format(portfolioHib.getLastModified());
         portfolio.setCreated(dateCreated);
 
-        Collection<Asset> assets = new ArrayList<>();
-
-        for (AssetHib ass : portfolioHib.getAssets()) {
-            assets.add(AssetHib.toAsset(ass));
+        Collection<Coin> coins = new ArrayList<>();
+        for (CoinHib ass : portfolioHib.getCoinHibs()) {
+            coins.add(CoinHib.toCoin(ass));
         }
+        portfolio.setCoins(coins);
 
-        portfolio.setAssets(assets);
+        Collection<CustomAsset> customAssets = new ArrayList<>();
+        for (CustomAssetHib ass : portfolioHib.getCustomAssetHibs()) {
+            customAssets.add(CustomAssetHib.toCustomAsset(ass));
+        }
+        portfolio.setCustomAssets(customAssets);
+
+        Collection<Fiat> fiats = new ArrayList<>();
+        for (FiatHib fiat : portfolioHib.getFiatHibs()) {
+            fiats.add(FiatHib.toFiat(fiat));
+        }
+        portfolio.setFiat(fiats);
 
         return portfolio;
     }

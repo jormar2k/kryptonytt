@@ -28,6 +28,9 @@ public class KryptonyttUserHib {
     @Column
     private String settings;
 
+    @Column
+    private String email;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Collection<PortfolioHib> portfolios;
 
@@ -38,6 +41,7 @@ public class KryptonyttUserHib {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
+        this.email = user.getEmail();
         this.settings = new Gson().toJson(user.getSettings());
     }
 
@@ -71,12 +75,19 @@ public class KryptonyttUserHib {
     public void setPortfolios(Collection<PortfolioHib> portfolios) {
         this.portfolios = portfolios;
     }
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public static KryptonyttUser toKryptonyttUser(KryptonyttUserHib kryptonyttUserHib) {
         KryptonyttUser kryptonyttUser = new KryptonyttUser();
         kryptonyttUser.setId(kryptonyttUserHib.getId());
         kryptonyttUser.setUsername(kryptonyttUserHib.getUsername());
         kryptonyttUser.setPassword(kryptonyttUserHib.getPassword());
+        kryptonyttUser.setEmail(kryptonyttUserHib.getEmail());
 
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> settingsMap = new Gson().fromJson(kryptonyttUserHib.getSettings(), type);

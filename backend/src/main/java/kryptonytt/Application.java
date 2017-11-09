@@ -1,8 +1,5 @@
 package kryptonytt;
 
-import kryptonytt.domain.Asset;
-import kryptonytt.domain.KryptonyttUser;
-import kryptonytt.domain.Portfolio;
 import kryptonytt.service.PortfolioService;
 import kryptonytt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -55,9 +48,9 @@ public class Application {
 //            KryptonyttUser jøgge = userService.createUser(user);
 //
 //            Portfolio winfolio = portfolioService.createPortfolio("winfolio", tobbe, true);
-//            Collection<Asset> assets = new ArrayList<>();
-//            assets.add(new Asset("IO", new BigDecimal(321)));
-//            assets.add(new Asset("BTC", new BigDecimal(321)));
+//            Collection<Coin> assets = new ArrayList<>();
+//            assets.add(new Coin("IO", new BigDecimal(321)));
+//            assets.add(new Coin("BTC", new BigDecimal(321)));
 //            portfolioService.refreshPortfolio(winfolio.getName(), tobbe, assets);
 
         };

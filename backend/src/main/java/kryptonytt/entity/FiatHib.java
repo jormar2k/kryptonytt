@@ -1,13 +1,13 @@
 package kryptonytt.entity;
 
-import kryptonytt.domain.Asset;
+import kryptonytt.domain.Fiat;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "ASSETS")
-public class AssetHib {
+@Table(name = "FIATS")
+public class FiatHib {
 
     @Id
     @Column
@@ -21,21 +21,21 @@ public class AssetHib {
     private BigDecimal amount;
 
     @Column
-    private Boolean custom;
+    private String currency;
 
     @ManyToOne
     private PortfolioHib portfolio;
 
-    public AssetHib() {
+    public FiatHib() {
     }
 
-    public AssetHib(Asset ass) {
-        this.identifier = ass.getIdentifier();
-        this.amount = ass.getAmount();
-        this.custom = ass.getCustom();
+    public FiatHib(Fiat fiat) {
+        this.identifier = fiat.getIdentifier();
+        this.amount = fiat.getAmount();
+        this.currency = fiat.getCurrency();
     }
 
-    public AssetHib(Long id) {
+    public FiatHib(Long id) {
         this.id = id;
     }
 
@@ -63,17 +63,19 @@ public class AssetHib {
     public void setPortfolio(PortfolioHib portfolio) {
         this.portfolio = portfolio;
     }
-    public Boolean getCustom() {
-        return custom;
+    public String getCurrency() {
+        return currency;
     }
-    public void setCustom(Boolean custom) {
-        this.custom = custom;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
-    public static Asset toAsset(AssetHib assetHib) {
-        Asset asset = new Asset(assetHib.getIdentifier(), assetHib.getAmount());
-        asset.setCustom(assetHib.getCustom());
-        asset.setId(assetHib.getId());
-        return asset;
+    public static Fiat toFiat(FiatHib fiatHib) {
+        Fiat fiat = new Fiat();
+        fiat.setIdentifier(fiatHib.getIdentifier());
+        fiat.setAmount(fiatHib.getAmount());
+        fiat.setCurrency(fiatHib.getCurrency());
+        fiat.setId(fiatHib.getId());
+        return fiat;
     }
 }
