@@ -123,7 +123,7 @@ public class PortfolioHib implements Serializable {
         Portfolio portfolio = new Portfolio();
         portfolio.setId(portfolioHib.getId());
         portfolio.setName(portfolioHib.getName());
-        portfolio.setUser(KryptonyttUserHib.toKryptonyttUser(portfolioHib.getUser()));
+//        portfolio.setUser(KryptonyttUserHib.toKryptonyttUser(portfolioHib.getUser()));
         portfolio.setPublic(portfolioHib.isPublic());
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");

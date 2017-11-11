@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserControllerREST {
 
     private final UserService userService;
@@ -35,7 +35,7 @@ public class UserControllerREST {
 //        return new ResponseEntity(HttpStatus.OK);
 //    }
 
-    @PutMapping(value ="/settings")
+    @PutMapping
     public ResponseEntity updateSettings(@RequestHeader(value="Authorization") String token, @RequestBody Map<String, Object> settings) {
         KryptonyttUser user = getKryptonyttUserFromToken(token);
         user.setSettings(settings);
@@ -45,10 +45,10 @@ public class UserControllerREST {
         return new ResponseEntity<>(updatedSettings, HttpStatus.OK);
     }
 
-    @GetMapping(value ="/settings")
-    public ResponseEntity getUserSettings(@RequestHeader(value="Authorization") String token) {
+    @GetMapping
+    public ResponseEntity getUser(@RequestHeader(value="Authorization") String token) {
         KryptonyttUser user = getKryptonyttUserFromToken(token);
-        return new ResponseEntity<>(user.getSettings(), HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     private KryptonyttUser getKryptonyttUserFromToken(@RequestHeader(value = "Authorization") String token) {

@@ -37,8 +37,11 @@ public class KryptonyttUserHib {
     public KryptonyttUserHib() {
     }
 
+    public KryptonyttUserHib(Long id) {
+        this.id = id;
+    }
+
     public KryptonyttUserHib(KryptonyttUser user) {
-        this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.email = user.getEmail();

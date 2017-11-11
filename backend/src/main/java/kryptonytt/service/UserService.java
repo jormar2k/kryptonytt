@@ -45,6 +45,7 @@ public class UserService {
     @Transactional
     public KryptonyttUser updateUserSettings(KryptonyttUser kryptonyttUser) {
         KryptonyttUserHib kryptonyttUserHib = new KryptonyttUserHib(kryptonyttUser);
+        kryptonyttUserHib.setId(kryptonyttUser.getId());
         KryptonyttUserHib saved = userRepository.save(kryptonyttUserHib);
         return KryptonyttUserHib.toKryptonyttUser(saved);
     }

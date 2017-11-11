@@ -2,8 +2,10 @@ package kryptonytt.service;
 
 import kryptonytt.domain.*;
 import kryptonytt.entity.*;
+import kryptonytt.exception.AssetLimitReached;
 import kryptonytt.exception.PortfolioExists;
 import kryptonytt.exception.PortfolioNotFound;
+import kryptonytt.exception.PortfolioLimitReached;
 import kryptonytt.repository.CoinRepository;
 import kryptonytt.repository.CustomAssetRepository;
 import kryptonytt.repository.FiatRepository;
@@ -43,12 +45,13 @@ public class PortfolioService {
 
     @Transactional
     public Portfolio refreshPortfolio(String portfolioName, Portfolio portfolio) throws ParseException {
-
         final Portfolio existingPortfolio = findPortfolio(portfolioName, portfolio.getUser());
 
         if (existingPortfolio == null) {
             throw new PortfolioNotFound(portfolioName, portfolio.getUser().getUsername());
         }
+
+        assertMaxAssetsNotReached(portfolio);
 
         if (!portfolioName.equals(portfolio.getName())) {
             final Portfolio portfolioWithNewName = findPortfolio(portfolio.getName(), portfolio.getUser());
@@ -63,7 +66,7 @@ public class PortfolioService {
 
         PortfolioHib portfolioHib = new PortfolioHib(portfolio);
         portfolioHib.setId(existingPortfolio.getId());
-        portfolioHib.setUser(new KryptonyttUserHib(portfolio.getUser()));
+        portfolioHib.setUser(new KryptonyttUserHib(portfolio.getUser().getId()));
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         Date date = sdf.parse(existingPortfolio.getCreated());
@@ -73,6 +76,18 @@ public class PortfolioService {
 
         portfolioRepository.save(portfolioHib);
         return findPortfolio(portfolioHib.getName(), portfolio.getUser());
+    }
+
+    private void assertMaxAssetsNotReached(Portfolio portfolio) {
+        Collection<Object> combinedAssets = new ArrayList<>();
+        combinedAssets.addAll(portfolio.getCoins());
+        combinedAssets.addAll(portfolio.getCustomAssets());
+        combinedAssets.addAll(portfolio.getFiat());
+
+        long count = combinedAssets.stream().count();
+        if (count >= 100L) {
+            throw new AssetLimitReached();
+        }
     }
 
     private void addAssetsToPortfolio(Portfolio portfolio, PortfolioHib portfolioHib) {
@@ -133,14 +148,20 @@ public class PortfolioService {
             throw new PortfolioNotFound(portfolioName, user.getUsername());
         }
 
-        PortfolioHib portfolioExample = new PortfolioHib(existingPortfolio);
+        deleteCoinsOnPortfolio(existingPortfolio);
+        deleteCustomAssetsOnPortfolio(existingPortfolio);
+        deleteFiatsOnPortfolio(existingPortfolio);
+
+        PortfolioHib portfolioExample = new PortfolioHib(existingPortfolio.getId());
         portfolioRepository.delete(portfolioExample);
 
     }
 
     @Transactional
     public Portfolio createPortfolio(String portfolioName, KryptonyttUser user, boolean isPublic) {
-        KryptonyttUserHib userExample = new KryptonyttUserHib(user);
+        assertPortfolioLimitNotReached(user.getId());
+
+        KryptonyttUserHib userExample = new KryptonyttUserHib(user.getId());
         PortfolioHib portfolioHib = new PortfolioHib();
         portfolioHib.setName(portfolioName);
         portfolioHib.setUser(userExample);
@@ -149,9 +170,20 @@ public class PortfolioService {
         return PortfolioHib.toPortfolio(portfolioHib);
     }
 
+    private void assertPortfolioLimitNotReached(Long userId) {
+        KryptonyttUserHib userExample = new KryptonyttUserHib(userId);
+        PortfolioHib portfolioHibExample = new PortfolioHib();
+        portfolioHibExample.setUser(userExample);
+
+        long nrOfPortfolios = portfolioRepository.count(Example.of(portfolioHibExample));
+
+        if (nrOfPortfolios >= 10L) {
+            throw new PortfolioLimitReached();
+        }
+    }
+
     public Portfolio findPortfolio(String name, KryptonyttUser user) {
-        KryptonyttUserHib userExample = new KryptonyttUserHib();
-        userExample.setId(user.getId());
+        KryptonyttUserHib userExample = new KryptonyttUserHib(user.getId());
         PortfolioHib portFolioExample = new PortfolioHib();
         portFolioExample.setName(name);
         portFolioExample.setUser(userExample);

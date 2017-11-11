@@ -95,29 +95,6 @@
                     <!--</jvmArguments>-->
                 </configuration>
             </plugin>
-
-            <!--<plugin>-->
-                <!--<groupId>org.liquibase</groupId>-->
-                <!--<artifactId>liquibase-maven-plugin</artifactId>-->
-                <!--<version>3.5.3</version>-->
-                <!--<configuration>-->
-                    <!--<changeLogFile>src/main/resources/liquibase/d</changeLogFile>-->
-                    <!--<driver>org.postgresql.Driver</driver>-->
-                    <!--<url>jdbc:postgresql://localhost:5432/kryptonytt</url>-->
-                    <!--<username>postgres</username>-->
-                    <!--<password>korkekork123</password>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<phase>process-resources</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>update</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-
         </plugins>
     </build>
 
