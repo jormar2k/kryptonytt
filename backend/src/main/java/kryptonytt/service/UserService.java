@@ -30,7 +30,8 @@ public class UserService {
             Map<String, Object> defaultSettings = new HashMap<>();
             defaultSettings.put("defaultCurrency", "USD");
             defaultSettings.put("currencies", Arrays.asList("BTC"));
-            defaultSettings.put("nightmode", true);
+            defaultSettings.put("nightMode", true);
+            defaultSettings.put("autoSyncApi", true);
             kryptonyttUser.setSettings(defaultSettings);
         }
 

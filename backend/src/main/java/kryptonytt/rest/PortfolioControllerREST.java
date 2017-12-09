@@ -38,6 +38,11 @@ public class PortfolioControllerREST {
         return portfolioService.findPortfolios(user.getUsername());
     }
 
+    @GetMapping(value ="/{username}")
+    public Collection<Portfolio> findPublicPortfolios(@PathVariable String username) {
+        return portfolioService.findPublicPortfolios(username);
+    }
+
     @DeleteMapping(value ="/{name}")
     public ResponseEntity deletePortfolio(@RequestHeader(value="Authorization") String token, @PathVariable String name) {
         KryptonyttUser user = getKryptonyttUserFromToken(token);

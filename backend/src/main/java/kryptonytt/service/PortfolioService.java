@@ -213,4 +213,23 @@ public class PortfolioService {
 
         return result;
     }
+
+    public Collection<Portfolio> findPublicPortfolios(String username) {
+        KryptonyttUser existingUser = userService.findUser(username);
+
+        KryptonyttUserHib userExample = new KryptonyttUserHib();
+        userExample.setId(existingUser.getId());
+
+        PortfolioHib portfolioExample = new PortfolioHib();
+        portfolioExample.setPublic(true);
+        portfolioExample.setUser(userExample);
+        List<PortfolioHib> portfolioHibs = portfolioRepository.findAll(Example.of(portfolioExample));
+
+        List<Portfolio> result = new ArrayList<>();
+        for (PortfolioHib portfolioHib : portfolioHibs) {
+            result.add(PortfolioHib.toPortfolio(portfolioHib));
+        }
+
+        return result;
+    }
 }
